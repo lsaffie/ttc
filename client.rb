@@ -8,10 +8,8 @@ HTTP_SUCCESS = "200"
 class Client
   include HTTParty
   base_uri 'timetracker.saffie.ca'
-  base_uri 'localhost:3000'
   basic_auth 'luis@saffie.ca', 'firetruck'
   url = "http://timetracker.saffie.ca"
-  url = "localhost:3000"
 
   def get_url(url)
     response = Client.get(url)
@@ -27,9 +25,9 @@ def create_task(task_name)
   @client = Client.new
   response = @client.post_url('/customers/2/tasks', {:task => {:name => task_name}, :start => Time.now})
   if response.response.code == HTTP_SUCCESS
-    puts "task created successfully"
+    puts "#{task_name} created successfully"
   else
-    puts "error creating task"
+    puts "error creating #{task_name}"
   end
 end
 
@@ -51,7 +49,7 @@ task    = ARGV[1]
 
 
 case command
-when "add"
+when "start"
   create_task(task)
 when "stop"
   stop_task
