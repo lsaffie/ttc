@@ -7,9 +7,11 @@ HTTP_SUCCESS = "200"
 
 class Client
   include HTTParty
-  base_uri 'timetracker.saffie.ca'
+  #base_uri 'timetracker.saffie.ca'
+  base_uri 'localhost:3000'
   basic_auth 'luis@saffie.ca', 'firetruck'
-  url = "http://timetracker.saffie.ca"
+  #url = "http://timetracker.saffie.ca"
+  url = "http://localhost:3000"
 
   def get_url(url)
     response = Client.get(url)
@@ -31,6 +33,24 @@ def create_task(task_name)
   end
 end
 
+def complete_all
+  @client = Client.new
+  @client.get_url('/customers/2/tasks/complete_all')
+  ""
+end
+
+def current
+  @client = Client.new
+  tasks = @client.get_url('/customers/2/tasks.json')
+  current = tasks.first["task"]
+  puts <<-EOS
+    completed?: #{current["completed"]}
+    name: #{current["name"]}
+    created_at: #{current["created_at"]}
+    total: #{current["total"]}
+  EOS
+end
+
 def stop_task
   @client = Client.new
   tasks = @client.get_url('/customers/2/tasks.json')
@@ -47,12 +67,15 @@ end
 command = ARGV[0]
 task    = ARGV[1]
 
-
 case command
 when "start"
   create_task(task)
 when "stop"
   stop_task
+when "complete_all"
+  complete_all
+when "current"
+  current
 else
-  puts "Usage: tt <add|stop> <task_name>"
+  puts "Usage: tt <start|stop|current|complete_all> <task_name>"
 end
