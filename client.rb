@@ -39,15 +39,17 @@ def complete_all
   ""
 end
 
-def current
+def status
+  require 'time'
   @client = Client.new
   tasks = @client.get_url('/customers/2/tasks.json')
   current = tasks.first["task"]
+  require 'ruby-debug'
+  total = (Time.now - Time.parse(current["created_at"]))/60
   puts <<-EOS
-    completed?: #{current["completed"]}
     name: #{current["name"]}
     created_at: #{current["created_at"]}
-    total: #{current["total"]}
+    total: #{total.round} mins
   EOS
 end
 
@@ -74,8 +76,8 @@ when "stop"
   stop_task
 when "complete_all"
   complete_all
-when "current"
-  current
+when "status"
+  status
 else
   puts "Usage: tt <start|stop|current|complete_all> <task_name>"
 end
