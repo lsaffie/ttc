@@ -58,12 +58,7 @@ def stop_task
   tasks = @client.get_url('/customers/2/tasks.json')
   current = tasks.first["task"]
 
-  #get last subtask
-  subtasks = @client.get_url("/customers/2/tasks/#{current["id"]}/sub_times.json")
-  current_subtask = subtasks.first["sub_time"]
-
-  #stop last subtask
-  Client.get("/customers/2/tasks/#{current["id"]}/sub_times/#{current_subtask["id"]}/stop")
+  Client.get("/customers/2/tasks/#{current["id"]}/stop")
 end
 
 command = ARGV[0]
